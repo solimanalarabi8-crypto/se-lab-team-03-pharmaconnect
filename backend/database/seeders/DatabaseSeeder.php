@@ -6,6 +6,8 @@ use App\Models\Category;
 use App\Models\Medicine;
 use App\Models\Pharmacy;
 use App\Models\PharmacyMedicine;
+use App\Models\Reservation;
+use App\Models\ReservationItem;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -176,12 +178,48 @@ class DatabaseSeeder extends Seeder
             'status' => 'available',
         ]);
 
-        PharmacyMedicine::create([
+        $pm4 = PharmacyMedicine::create([
             'pharmacy_id' => $pharmacy2->id,
             'medicine_id' => $med4->id,
             'available_quantity' => 12,
             'price' => 950.00,
             'status' => 'available',
         ]);
+
+        // 8. إنشاء حجوزات نموذجية نشطة بمهلة TTL ومؤقت زمني حي
+        $patient = User::where('role', 'patient')->first();
+        if ($patient) {
+            $res1 = Reservation::create([
+                'reservation_code' => 'RES-SH7781',
+                'user_id' => $patient->id,
+                'pharmacy_id' => $pharmacy1->id,
+                'status' => 'pending',
+                'total_amount' => 4500.00,
+                'expires_at' => now()->addMinutes(28),
+            ]);
+
+            ReservationItem::create([
+                'reservation_id' => $res1->id,
+                'pharmacy_medicine_id' => $pm2->id ?? 2,
+                'quantity' => 1,
+                'unit_price' => 4500.00,
+            ]);
+
+            $res2 = Reservation::create([
+                'reservation_code' => 'RES-AM9923',
+                'user_id' => $patient->id,
+                'pharmacy_id' => $pharmacy2->id,
+                'status' => 'pending',
+                'total_amount' => 1900.00,
+                'expires_at' => now()->addMinutes(19),
+            ]);
+
+            ReservationItem::create([
+                'reservation_id' => $res2->id,
+                'pharmacy_medicine_id' => $pm4->id,
+                'quantity' => 2,
+                'unit_price' => 950.00,
+            ]);
+        }
     }
 }
