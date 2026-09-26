@@ -61,3 +61,5 @@ yarn-error.log*
 render.yaml
 extracted_lecture1.txt
 *.pdf
+*.sqlite
+*.sqlite-journal
