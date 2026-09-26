@@ -1,0 +1,63 @@
+# OS Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+~$*
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment & Credentials
+.env
+.env.backup
+.env.production
+*.key
+*.pem
+
+# Laravel
+/backend/vendor/
+/backend/node_modules/
+/backend/public/storage
+/backend/storage/*.key
+/backend/storage/oauth-*.key
+/backend/storage/framework/cache/*
+/backend/storage/framework/sessions/*
+/backend/storage/framework/views/*
+/backend/storage/logs/*
+/backend/.phpunit.result.cache
+
+# Flutter & Dart
+/frontend/.dart_tool/
+/frontend/.flutter-plugins
+/frontend/.flutter-plugins-dependencies
+/frontend/.packages
+/frontend/.pub-cache/
+/frontend/.pub/
+/frontend/build/
+/frontend/.fvm/
+*.apk
+/PharmaConnect.apk
+
+# Node / Web Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Legacy course delivery files & references (Kept locally, untracked by Git)
+محاضرات/
+ملفات_تسليم_مشروع_فلاتر_PharmaConnect/
+مقترح.md
+مقترح_المشروع_المعتمد.md
+*.docx
+render.yaml
+extracted_lecture1.txt
+*.pdf
