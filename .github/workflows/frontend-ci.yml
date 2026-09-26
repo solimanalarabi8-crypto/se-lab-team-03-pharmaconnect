@@ -1,0 +1,39 @@
+name: Frontend CI (Flutter Analyze & Test)
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+jobs:
+  flutter-analyze-and-test:
+    name: Flutter Lint & Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Run Analyze and Test
+        run: |
+          if [ -d "frontend" ]; then
+            cd frontend
+            if [ -f "pubspec.yaml" ]; then
+              flutter pub get
+              flutter analyze
+              flutter test
+            fi
+          fi

@@ -1,0 +1,69 @@
+name: Backend CI (Laravel Pint & PHPUnit)
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [ "main", "develop" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  laravel-pint:
+    name: Code Style & Pint Testing
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite
+          coverage: none
+
+      - name: Check Laravel Pint Code Style
+        run: |
+          if [ -d "backend" ]; then
+            cd backend
+            if [ -f "composer.json" ]; then
+              composer install --prefer-dist --no-interaction --no-progress
+              if [ -f "./vendor/bin/pint" ]; then
+                ./vendor/bin/pint --test
+              fi
+            fi
+          fi
+
+  laravel-tests:
+    name: Automated Unit & Feature Tests (PHPUnit)
+    needs: laravel-pint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite
+          coverage: none
+
+      - name: Run Backend Tests
+        run: |
+          if [ -d "backend" ]; then
+            cd backend
+            if [ -f "composer.json" ]; then
+              composer install --prefer-dist --no-interaction --no-progress
+              if [ -f ".env.example" ] && [ ! -f ".env" ]; then
+                cp .env.example .env
+                php artisan key:generate
+              fi
+              php artisan test
+            fi
+          fi
