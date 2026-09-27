@@ -18,7 +18,7 @@ class Inventory extends Model
     ];
 
     protected $casts = [
-        'price'       => 'float',
+        'price' => 'float',
         'expiry_date' => 'date',
     ];
 
