@@ -4,41 +4,55 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Pharmacy extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'name',
-        'address',
+        'license_number',
         'phone',
+        'address',
         'latitude',
         'longitude',
-        'owner_id',
         'is_active',
+        'is_verified',
     ];
 
-    protected $casts = [
-        'latitude'  => 'float',
-        'longitude' => 'float',
-        'is_active' => 'boolean',
-    ];
-
-    public function owner()
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class, 'owner_id');
+        return [
+            'latitude' => 'float',
+            'longitude' => 'float',
+            'is_active' => 'boolean',
+            'is_verified' => 'boolean',
+        ];
     }
 
-    public function inventory()
+    public function user(): BelongsTo
     {
-        return $this->hasMany(Inventory::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function medicines()
+    public function pharmacyMedicines(): HasMany
     {
-        return $this->belongsToMany(Medicine::class, 'inventories')
-                    ->withPivot(['quantity', 'price', 'expiry_date'])
-                    ->withTimestamps();
+        return $this->hasMany(PharmacyMedicine::class);
+    }
+
+    public function medicines(): BelongsToMany
+    {
+        return $this->belongsToMany(Medicine::class, 'pharmacy_medicines')
+            ->withPivot(['id', 'available_quantity', 'price', 'status'])
+            ->withTimestamps();
+    }
+
+    public function reservations(): HasMany
+    {
+        return $this->hasMany(Reservation::class);
     }
 }

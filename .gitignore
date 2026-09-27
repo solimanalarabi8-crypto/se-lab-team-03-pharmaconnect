@@ -61,3 +61,11 @@ yarn-error.log*
 render.yaml
 extracted_lecture1.txt
 *.pdf
+*.sqlite
+*.sqlite-journal
+
+# Viva & Cheat Sheets (Kept locally for defense, untracked by Git)
+/docs/TEAM_CHEAT_SHEET.md
+/docs/VIVA_DEEP_QUESTIONS.md
+*دليل_مهام*
+.agents/

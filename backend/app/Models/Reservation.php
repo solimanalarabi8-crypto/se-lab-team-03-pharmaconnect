@@ -4,50 +4,56 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Reservation extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'patient_id',
-        'inventory_id',
-        'quantity',
+        'reservation_code',
+        'user_id',
+        'pharmacy_id',
         'status',
-        'reserved_at',
+        'total_amount',
         'expires_at',
         'confirmed_at',
-        'notes',
+        'completed_at',
     ];
 
-    protected $casts = [
-        'reserved_at'  => 'datetime',
-        'expires_at'   => 'datetime',
-        'confirmed_at' => 'datetime',
-    ];
-
-    public function patient()
+    protected function casts(): array
     {
-        return $this->belongsTo(User::class, 'patient_id');
+        return [
+            'total_amount' => 'float',
+            'expires_at' => 'datetime',
+            'confirmed_at' => 'datetime',
+            'completed_at' => 'datetime',
+        ];
     }
 
-    public function inventory()
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Inventory::class);
+        return $this->belongsTo(User::class);
+    }
+
+    public function pharmacy(): BelongsTo
+    {
+        return $this->belongsTo(Pharmacy::class);
+    }
+
+    public function reservationItems(): HasMany
+    {
+        return $this->hasMany(ReservationItem::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->reservationItems();
     }
 
     public function isExpired(): bool
     {
-        return now()->isAfter($this->expires_at);
-    }
-
-    public function isPending(): bool
-    {
-        return $this->status === 'pending';
-    }
-
-    public function isConfirmed(): bool
-    {
-        return $this->status === 'confirmed';
+        return $this->status === 'pending' && $this->expires_at->isPast();
     }
 }

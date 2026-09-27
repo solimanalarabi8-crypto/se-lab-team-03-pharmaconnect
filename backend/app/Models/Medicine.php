@@ -4,34 +4,46 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Medicine extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'category_id',
         'scientific_name',
-        'category',
-        'description',
-        'unit',
+        'trade_name',
+        'barcode',
+        'dosage_form',
+        'strength',
         'manufacturer',
+        'is_prescription_required',
     ];
 
-    public function inventories()
+    protected function casts(): array
     {
-        return $this->hasMany(Inventory::class);
+        return [
+            'is_prescription_required' => 'boolean',
+        ];
     }
 
-    public function pharmacies()
+    public function category(): BelongsTo
     {
-        return $this->belongsToMany(Pharmacy::class, 'inventories')
-                    ->withPivot(['quantity', 'price', 'expiry_date'])
-                    ->withTimestamps();
+        return $this->belongsTo(Category::class);
     }
 
-    public function savedByUsers()
+    public function pharmacyMedicines(): HasMany
     {
-        return $this->hasMany(SavedMedicine::class);
+        return $this->hasMany(PharmacyMedicine::class);
+    }
+
+    public function pharmacies(): BelongsToMany
+    {
+        return $this->belongsToMany(Pharmacy::class, 'pharmacy_medicines')
+            ->withPivot(['id', 'available_quantity', 'price', 'status'])
+            ->withTimestamps();
     }
 }
